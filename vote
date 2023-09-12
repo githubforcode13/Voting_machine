@@ -1,0 +1,113 @@
+module vote(reset,admin_code,k,mode,clk1k,switch,a3,a2,a1);
+input reset;
+input [4:0]admin_code;
+input k;
+input mode,clk1k;
+input [3:0]switch;
+output reg [3:0]a1=4'b0000;
+output reg [3:0]a2=4'b0000;
+output reg [3:0]a3=4'b0000;
+reg[9:0]v=10'd0;
+reg[9:0]v1=10'd0;
+reg[9:0]v2=10'd0;
+reg[9:0]v3=10'd0;
+reg[9:0]v4=10'd0;
+reg valid=1'b0;
+
+always @(posedge clk1k)
+begin
+if(admin_code==5'b10101) begin
+if(reset) begin
+a1<=0;a2<=0;a3<=0; 
+v1<=0;v2<=0;v3<=0;v4<=0;
+end
+else begin
+case(mode)
+    1'b0:begin
+                if(k && !valid)
+                valid<=1'b1;
+                else if(!k)
+                begin
+                if(valid)
+                    begin
+                case(switch)    
+                4'b0001:begin
+                        a1=4'd11;
+                        a2=4'd12;
+                        a3=4'd1;
+                        v1=v1+1'b1;
+                        valid=1'b0; 
+                end
+                4'b0010:begin
+                            a1=4'd11;
+                            a2=4'd12;
+                            a3=4'd2;
+                             v2=v2+1'b1;
+                             valid=1'b0;
+                     
+                   end
+                4'b0100:begin
+                       
+                        a1=4'd11;
+                        a2=4'd12;
+                        a3=4'd3;
+                        v3=v3+1'b1;
+                       valid=1'b0;
+                         
+                      end
+                4'b1000:begin              
+                        a1=4'd11;
+                        a2=4'd12;
+                        a3=4'd4;
+                        v4=v4+1'b1;   
+                         valid=1'b0;                  
+                         end 
+                default:   begin
+                                   a1=4'd11;
+                                   a2=4'd11;
+                                   a3=4'd11;
+                    end 
+                endcase
+                end
+          end
+    end
+        1'b1:begin
+                case(switch)
+                4'b0001:begin
+                v<=v1;
+                a3<=v%10;
+                a2<=(v/10)%10;
+                a1<=(v/10)/10;
+                end
+                4'b0010:begin
+                        v<=v2;
+                        a3<=v%10;
+                        a2<=(v/10)%10;
+                        a1<=(v/10)/10;
+                        end
+                        4'b0100:begin
+                                v<=v3;
+                                a3<=v%10;
+                                a2<=(v/10)%10;
+                                a1<=(v/10)/10;
+                                end
+                                4'b1000:begin
+                                        v<=v4;
+                                        a3<=v%10;
+                                        a2<=(v/10)%10;
+                                        a1<=(v/10)/10;
+                                        end
+                                          default:   begin
+                                                                    a1<=4'd11;
+                                                                      a2<=4'd11;
+                                                                      a3<=4'd11;
+                                                                      end
+                endcase                
+                end
+endcase
+end
+end
+end
+endmodule
+
+
